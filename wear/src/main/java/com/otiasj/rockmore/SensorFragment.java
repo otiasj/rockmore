@@ -96,6 +96,12 @@ public class SensorFragment extends Fragment implements SensorEventListener {
         } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
             detectRotation(event);
         }
+
+        sendMessage(event);
+    }
+
+    private void sendMessage(final SensorEvent event) {
+
     }
 
     @Override
