@@ -14,7 +14,7 @@ gen/
 
 # Gradle files
 .gradle/
-build/
+/*/build/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -30,3 +30,29 @@ proguard/
 
 # Android Studio captures folder
 captures/
+# built native files
+*.o
+*.so
+
+# Eclipse Metadata
+.metadata/
+
+# Windows clutter
+Thumbs.db
+
+# Old-style IDEA project files
+*.ipr
+*.iws
+
+# Android Studio
+.gradle
+/local.properties
+/.idea/workspace.xml
+.idea/tasks.xml
+.idea/datasources.xml
+.idea/dataSources.ids
+/.idea/libraries
+.DS_Store
+/build
+*.iml
+.idea
