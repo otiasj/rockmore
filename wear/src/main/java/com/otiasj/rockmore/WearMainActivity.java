@@ -5,6 +5,7 @@ import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.WatchViewStub;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -17,6 +18,7 @@ public class WearMainActivity extends WearableActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
+    private static final String TAG = WearMainActivity.class.getCanonicalName();
     private GoogleApiClient googleClient;
 
     @Override
@@ -46,6 +48,10 @@ public class WearMainActivity extends WearableActivity implements
 
     }
 
+    public GoogleApiClient getGoogleClient() {
+        return googleClient;
+    }
+
     // Connect to the data layer when the Activity starts
     @Override
     protected void onStart() {
@@ -54,21 +60,9 @@ public class WearMainActivity extends WearableActivity implements
     }
 
     // Send a data object when the data layer connection is successful.
-
     @Override
     public void onConnected(Bundle connectionHint) {
-
-        String WEARABLE_DATA_PATH = "/wearable_data";
-
-        // Create a DataMap object and send it to the data layer
-        DataMap dataMap = new DataMap();
-        dataMap.putLong("time", new Date().getTime());
-        dataMap.putString("hole", "1");
-        dataMap.putString("front", "250");
-        dataMap.putString("middle", "260");
-        dataMap.putString("back", "270");
-        //Requires a new thread to avoid blocking the UI
-        new SendToDataLayerThread(googleClient, WEARABLE_DATA_PATH, dataMap).start();
+        Log.v(TAG, "Connected google Client on watch");
     }
 
     // Disconnect from the data layer when the Activity stops

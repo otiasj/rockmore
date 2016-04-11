@@ -13,6 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataMap;
+
+import java.util.Date;
+
 public class SensorFragment extends Fragment implements SensorEventListener {
 
     private static final float SHAKE_THRESHOLD = 1.1f;
@@ -28,6 +33,7 @@ public class SensorFragment extends Fragment implements SensorEventListener {
     private int mSensorType;
     private long mShakeTime = 0;
     private long mRotationTime = 0;
+    private GoogleApiClient googleClient;
 
     public static SensorFragment newInstance(int sensorType) {
         SensorFragment f = new SensorFragment();
@@ -70,12 +76,14 @@ public class SensorFragment extends Fragment implements SensorEventListener {
     public void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        googleClient = ((WearMainActivity) getActivity()).getGoogleClient();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(this);
+        googleClient = null;
     }
 
     @Override
@@ -101,7 +109,16 @@ public class SensorFragment extends Fragment implements SensorEventListener {
     }
 
     private void sendMessage(final SensorEvent event) {
+        String WEARABLE_DATA_PATH = "/wearable_data";
+        DataMap dataMap = new DataMap();
+        dataMap.putLong("time", new Date().getTime());
+        dataMap.putFloat("x", event.values[0]);
+        dataMap.putFloat("y", event.values[1]);
+        dataMap.putFloat("z", event.values[2]);
 
+        if (googleClient != null) {
+            new SendToDataLayerThread(googleClient, WEARABLE_DATA_PATH, dataMap).start();
+        }
     }
 
     @Override
