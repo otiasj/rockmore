@@ -9,10 +9,7 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.Wearable;
-
-import java.util.Date;
 
 public class WearMainActivity extends WearableActivity implements
         GoogleApiClient.ConnectionCallbacks,
