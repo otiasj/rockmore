@@ -72,36 +72,28 @@ public class Graph {
 
     }
 
-    public void addEntry(final float x, final float y, final float z) {
+    public void addEntry(final float v1, final float v2) {
 
         LineData data = mChart.getData();
 
         if (data != null) {
 
-            ILineDataSet setX = data.getDataSetByIndex(0);
-            if (setX == null) {
-                setX = createSet("x");
-                data.addDataSet(setX);
+            ILineDataSet set1 = data.getDataSetByIndex(0);
+            if (set1 == null) {
+                set1 = createSet1("v1");
+                data.addDataSet(set1);
             }
-            setX.addEntry(new Entry(x, setX.getEntryCount()));
+            set1.addEntry(new Entry(v1, set1.getEntryCount()));
 
-            ILineDataSet setY = data.getDataSetByIndex(1);
-            if (setY == null) {
-                setY = createSet("y");
-                data.addDataSet(setY);
+            ILineDataSet set2 = data.getDataSetByIndex(1);
+            if (set2 == null) {
+                set2 = createSet2("v2");
+                data.addDataSet(set2);
             }
-            setY.addEntry(new Entry(y, setY.getEntryCount()));
-
-            ILineDataSet setZ = data.getDataSetByIndex(2);
-            if (setZ == null) {
-                setZ = createSet("z");
-                data.addDataSet(setZ);
-            }
-            setZ.addEntry(new Entry(z, setZ.getEntryCount()));
-
+            set2.addEntry(new Entry(v2, set2.getEntryCount()));
 
             // add a new x-value first
-            data.addXValue(setX.getEntryCount() + "");
+            data.addXValue(set1.getEntryCount() + "");
 
             // let the chart know it's data has changed
             mChart.notifyDataSetChanged();
@@ -118,12 +110,29 @@ public class Graph {
         }
     }
 
-    private LineDataSet createSet(String name) {
+    private LineDataSet createSet1(String name) {
 
         LineDataSet set = new LineDataSet(null, name);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(ColorTemplate.getHoloBlue());
         set.setCircleColor(Color.WHITE);
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setFillAlpha(65);
+        set.setFillColor(ColorTemplate.getHoloBlue());
+        set.setHighLightColor(Color.rgb(244, 117, 117));
+        set.setValueTextColor(Color.WHITE);
+        set.setValueTextSize(9f);
+        set.setDrawValues(false);
+        return set;
+    }
+
+    private LineDataSet createSet2(String name) {
+
+        LineDataSet set = new LineDataSet(null, name);
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(ColorTemplate.getHoloBlue());
+        set.setCircleColor(Color.RED);
         set.setLineWidth(2f);
         set.setCircleRadius(4f);
         set.setFillAlpha(65);

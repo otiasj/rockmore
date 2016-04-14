@@ -34,6 +34,7 @@ public class SensorFragment extends Fragment implements SensorEventListener {
     private static final int MINIMAL_STACK_SIZE_TO_FLIP = 2; // Shouldn't be lower than 2
     private static final float FLIP_RADIANS = (float) Math.toRadians(140);
     private static final int STACK_MAX_SIZE = 38;
+    private static final String[] toneRange = {"DO 1", "RE", "MI", "FA", "SOL", "LA", "SI", "DO 2"};
     private final float[] deltaRotationVector = new float[4];
     private View mView;
     private TextView mTextTitle;
@@ -48,6 +49,7 @@ public class SensorFragment extends Fragment implements SensorEventListener {
     private List<Float> stack1 = new ArrayList<Float>();
     private long lastAdd = 0;
     private long lastFlip = 0;
+    private int currentTone = 4;
 
     public static SensorFragment newInstance(int sensorType) {
         SensorFragment f = new SensorFragment();
@@ -80,7 +82,7 @@ public class SensorFragment extends Fragment implements SensorEventListener {
         mView = inflater.inflate(R.layout.sensor, container, false);
 
         mTextTitle = (TextView) mView.findViewById(R.id.text_title);
-        mTextTitle.setText(mSensor.getStringType());
+        //mTextTitle.setText();
         mTextValues = (TextView) mView.findViewById(R.id.text_values);
 
         return mView;
@@ -107,17 +109,20 @@ public class SensorFragment extends Fragment implements SensorEventListener {
             return;
         }
 
-        mTextValues.setText(
-                "x = " + Float.toString(event.values[0]) + "\n" +
-                        "y = " + Float.toString(event.values[1]) + "\n" +
-                        "z = " + Float.toString(event.values[2]) + "\n"
-        );
+        //mTextValues.setText(
+        //        "x = " + Float.toString(event.values[0]) + "\n" +
+        //                "y = " + Float.toString(event.values[1]) + "\n" +
+        //                "z = " + Float.toString(event.values[2]) + "\n"
+        //);
 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             detectShake(event);
+            mTextValues.setText("tilt forward\nor back\nto change tone > ");
         } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            //detectRotation(event);
+            detectRotation(event);
             rotationRateAroundXChanged((float) event.values[0]);
+            mTextValues.setText(toneRange[currentTone]);
+            mTextValues.setTextSize(20);
         }
     }
 
@@ -170,7 +175,7 @@ public class SensorFragment extends Fragment implements SensorEventListener {
             // otherwise, reset the color
             if (gForce > SHAKE_THRESHOLD) {
                 mView.setBackgroundColor(Color.rgb(0, 100, 0));
-                sendEvent(0);
+                currentTone = 0;
             } else {
                 mView.setBackgroundColor(Color.BLACK);
             }
@@ -192,7 +197,6 @@ public class SensorFragment extends Fragment implements SensorEventListener {
         }
     }
 
-    private int currentTone = 5;
     private void updateAngle() {
         int stackSize = stack1.size();
         if (stackSize < MINIMAL_STACK_SIZE_TO_FLIP) return;
@@ -212,15 +216,19 @@ public class SensorFragment extends Fragment implements SensorEventListener {
             }
         }
 
-        int tone = (int) (approximateAngleSummary * 10) % 4; // 4 tones jump max
-        currentTone += tone;
-        if (currentTone >=8 ) {
+        //int tone = (int) (approximateAngleSummary * 10);
+        if (approximateAngleSummary > 0) {
+            currentTone++;
+        } else {
+            currentTone--;
+        }
+        if (currentTone >= 8) {
             currentTone = 7;
         }
         if (currentTone < 0) {
             currentTone = 0;
         }
-        Log.e(TAG, "ANGLE = " + approximateAngleSummary + " -> " + tone + " current " + currentTone);
+        Log.e(TAG, "ANGLE = " + approximateAngleSummary + " -> current " + currentTone);
         sendEvent(currentTone);
     }
 
@@ -254,7 +262,7 @@ public class SensorFragment extends Fragment implements SensorEventListener {
                     Math.abs(event.values[1]) > ROTATION_THRESHOLD ||
                     Math.abs(event.values[2]) > ROTATION_THRESHOLD) {
                 mView.setBackgroundColor(Color.rgb(0, 100, 0));
-                sendEvent(1);
+                currentTone = 7;
             } else {
                 mView.setBackgroundColor(Color.BLACK);
             }

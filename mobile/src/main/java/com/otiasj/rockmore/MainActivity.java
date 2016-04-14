@@ -97,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements SensorListener, D
                 int tone = items.getInt("tone");
                 Log.d(TAG, "tone " + tone);
                 audio.setFrequency(tone);
+                graph1 = tone * 10f;
+                updateGraph();
             }
         }
     }
@@ -108,7 +110,14 @@ public class MainActivity extends AppCompatActivity implements SensorListener, D
             amplitude = 1.0f - (value / 100.0f);
         }
         audio.update(amplitude);
-        graph.addEntry(0f, 0f, value);
+        graph2 = value;
+        updateGraph();
+    }
+
+    float graph1;
+    float graph2;
+    private void updateGraph() {
+        graph.addEntry(graph1, graph2);
     }
 
     @Override
