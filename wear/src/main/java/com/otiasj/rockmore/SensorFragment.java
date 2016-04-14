@@ -104,8 +104,17 @@ public class SensorFragment extends Fragment implements SensorEventListener {
         } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
             detectRotation(event);
         }
+    }
 
-        sendMessage(event);
+    private void sendEvent(final int eventType) {
+        String WEARABLE_DATA_PATH = "/wearable_data";
+        DataMap dataMap = new DataMap();
+        dataMap.putLong("time", new Date().getTime());
+        dataMap.putInt("type", eventType);
+
+        if (googleClient != null) {
+            new SendToDataLayerThread(googleClient, WEARABLE_DATA_PATH, dataMap).start();
+        }
     }
 
     private void sendMessage(final SensorEvent event) {
@@ -147,6 +156,7 @@ public class SensorFragment extends Fragment implements SensorEventListener {
             // otherwise, reset the color
             if (gForce > SHAKE_THRESHOLD) {
                 mView.setBackgroundColor(Color.rgb(0, 100, 0));
+                sendEvent(0);
             } else {
                 mView.setBackgroundColor(Color.BLACK);
             }
@@ -166,6 +176,7 @@ public class SensorFragment extends Fragment implements SensorEventListener {
                     Math.abs(event.values[1]) > ROTATION_THRESHOLD ||
                     Math.abs(event.values[2]) > ROTATION_THRESHOLD) {
                 mView.setBackgroundColor(Color.rgb(0, 100, 0));
+                sendEvent(1);
             } else {
                 mView.setBackgroundColor(Color.BLACK);
             }
