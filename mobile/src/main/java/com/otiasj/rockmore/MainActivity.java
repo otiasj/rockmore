@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.gms.common.ConnectionResult;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements SensorListener, D
         graph = new Graph((LineChart) findViewById(R.id.chart1));
         sensors = new Sensors(this, this);
         audio = new Audio();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
